@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet" type="text/css" href="assets/css/reset.css">
+<style type="text/css">
+body{
+	background-color: #000;
+}
+#grid{
+	display:flex;
+	flex-direction: column;
+}
+#grid > .row{
+	width:100%;
+	height:10px;
+	display:flex;
+	flex-direction: row;
+/*	border:0.5px solid blue;*/
+}
+.cell{
+	background-image: url("assets/images/a.jpg");
+  	background-position: center;
+  	background-repeat: no-repeat;
+  	background-size: 100% 10px;
+	flex: 1;
+}
+video{
+	border:1px solid white;
+}
+</style>
+</head>
+<body>
+<main></main>
+<script type="text/javascript">
+	const W = 70;
+	const H = W/2;
+	
+	let grid = document.createElement('div');
+	grid.id = "grid";
+	grid.style.width = W*10 + 'px';
+	grid.style.height = H*10 + 'px';
+	document.body.appendChild(grid);
+	
+	for(let i=0; i<H; i+=1){
+		let rows = document.createElement('div');
+		rows.className = "row";
+		grid.appendChild(rows);
+		for(let j=0; j<W; j+=1){
+			let cells = document.createElement('div');
+			cells.className = "cell";
+			rows.appendChild(cells);
+		}
+	}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+<script type="text/javascript">
+	let vid
+	const cells = document.querySelectorAll('.cell');
+	
+	function setup() {
+	  noCanvas();
+	  vid = createVideo("../assets/videos/thisworks.mp4");
+	  vid.size(W, H);
+	  vid.volume(0);
+	  vid.loop();
+	}
+	function draw() {
+	  let video = vid.get();
+	
+	  video.loadPixels();
+	  let em = 0;
+	  for (let j = 0; j < H; j++) {
+	    for (let i = 0; i < W; i++) {
+	      let index = (i + j * W) * 4;
+	      let r = video.pixels[index + 0];
+	      let g = video.pixels[index + 1];
+	      let b = video.pixels[index + 2];
+		
+	      if(r < 100 && g < 100 && b < 100){
+	      	cells[index / 4].style.flex = '1';
+	        em = 0;
+	      }
+	      else{
+	      	em += 1;
+	      	cells[index / 4].style.flex = em;
+	      	if(1 < em){
+	      		cells[(index / 4) - 1].style.flex = '0';
+	      	}
+	      }
+	    }
+	  }
+	}
+</script>
+</body>
+</html>

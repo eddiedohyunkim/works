@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style type="text/css">
+		body{
+			background-color: #000;
+		}
+		canvas{
+			position: absolute;
+			left:50%;
+			top:50%;
+			transform: translate(-50%, -50%);
+		}
+	</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+<script type="text/javascript">
+let points;
+let txt = "AVOIDANCE";
+let cursorSize = 100;
+
+function setup(){
+  createCanvas(500, 500);
+  textFont('Arial');
+  textSize(48);
+  textAlign(LEFT);
+
+  points = [];
+  let textW = textWidth(txt);
+  let s2 = "";
+  for(var i = 0; i < txt.length; i+=1){
+    let charPosn = textWidth(s2);
+    points.push(createVector((width - textW) / 2 + textWidth(s2), height / 2));
+    s2 += txt.charAt(i);
+  }
+}
+
+function draw(){
+  background(0);
+  fill(255);
+  for(let i = 0; i < points.length; i+=1){
+    let p = points[i];
+    let p2 = createVector(0, 0);
+    p2 = createVector(p.x - mouseX, p.y - mouseY);   
+    p2.setMag(cursorSize);
+    text(txt.charAt(i), p.x + p2.x, p.y + p2.y);
+  }
+}
+
+</script>
+</body>
+</html>

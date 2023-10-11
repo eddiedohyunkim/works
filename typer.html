@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<!-- <link rel="stylesheet" type="text/css" href="assets/css/reset.css"> -->
+	<style type="text/css">
+		body{
+			margin:0;
+		}
+		canvas{
+/*  			border:1px solid;*/
+/*  			width:calc(100vw - 2rem);*/
+/*			height:calc(100vh - 2rem);*/
+		}
+	</style>
+</head>
+<body>
+Type: <input>
+<br>
+<canvas width="400" height="400" id="cv"></canvas>
+<script type="text/javascript">
+const canvas = document.getElementById('cv')
+const ctx = canvas.getContext('2d');
+setWindowSize()
+draw()
+
+divide(12)
+
+function divide(n){
+	let sum = 100
+	const numbers = []
+	for (let i = 0; i < n - 1; i++) {
+    	const randomNumber = Math.floor(Math.random() * sum)
+    	sum -= randomNumber < 0 ? 0 : randomNumber
+    	numbers.push(randomNumber < 0 ? 0 : randomNumber)
+	}
+	numbers.push(sum)
+	console.log(numbers, numbers.reduce((a, b) => a + b, 0)) // 5 random numbers of sum 100
+	// return numbers
+}
+// console.log( divide(5) )
+// function divide(n){
+// 	let sum = 100
+// 	const numbers = []
+// 	let max = 100 / n;
+// 	let min = 5;
+// 	let sum2;
+// 	for (let i = 0; i < 5 - 1; i++) {
+//     	const randomNumber = Math.floor(Math.random() * (max - min) + min); 
+//     	numbers.push(randomNumber);
+// 	}
+// 	return numbers
+// }
+
+
+function draw(){
+	document.querySelector('input').addEventListener("input", function() {
+    	var text = this.value;
+    	ctx.font = "100pt Arial";
+    	ctx.clearRect(0, 0, window.innerWidth, 400);
+    	var width = ctx.measureText(text).width;
+    	if(width <= window.innerWidth) {
+    	    ctx.fillText(text, 0, 100);
+    	} else {
+    	    ctx.save();
+    	    ctx.scale(window.innerWidth / width, 1);
+    	    ctx.fillText(text, 0, 100);
+    	    ctx.restore();
+    	}
+	});
+}
+
+function setWindowSize(){
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	setDPI(canvas, 300);
+}
+
+function setDPI(canvas, dpi) {
+    // Set up CSS size.
+    canvas.style.width = canvas.style.width || canvas.width + 'px';
+    canvas.style.height = canvas.style.height || canvas.height + 'px';
+
+    // Get size information.
+    var scaleFactor = dpi / 96;
+    var width = parseFloat(canvas.style.width);
+    var height = parseFloat(canvas.style.height);
+
+    // Backup the canvas contents.
+    var oldScale = canvas.width / width;
+    var backupScale = scaleFactor / oldScale;
+    var backup = canvas.cloneNode(false);
+    backup.getContext('2d').drawImage(canvas, 0, 0);
+
+    // Resize the canvas.
+    var ctx = canvas.getContext('2d');
+    canvas.width = Math.ceil(width * scaleFactor);
+    canvas.height = Math.ceil(height * scaleFactor);
+
+    // Redraw the canvas image and scale future draws.
+    ctx.setTransform(backupScale, 0, 0, backupScale, 0, 0);
+    ctx.drawImage(backup, 0, 0);
+    ctx.setTransform(scaleFactor, 0, 0, scaleFactor, 0, 0);
+}
+
+
+window.addEventListener("resize", function(){
+	setWindowSize()
+	draw()
+});
+
+</script>
+</body>
+</html>
