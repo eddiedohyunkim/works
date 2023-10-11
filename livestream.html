@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+	<style type="text/css">
+		body{
+			background-color: #000;
+		}
+		video{
+			border:1px solid white;
+		}
+		canvas{
+			width:800px;
+			height:400px;
+		}
+	</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.min.js"></script>
+<script type="text/javascript">
+let inputText = `The red ball sat proudly at the top of the toybox. It had been the last to be played with and anticipated it would be the next as well. The other toys grumbled beneath. At one time each had held the spot of the red ball, but over time they had sunk deeper and deeper into the toy box. She wanted rainbow hair. That's what she told the hairdresser. It should be deep rainbow colors, too. She wasn't interested in pastel rainbow hair. She wanted it deep and vibrant so there was no doubt that she had done this on purpose.`;
+inputText = inputText.toUpperCase();
+inputText = inputText.replace(/\s/g, '');
+
+let fontScaleMax = 4;
+let fontScaleMin = 0.1;
+
+// values depending on the char width
+// white to black
+
+let fontSize = 6;
+let spacing = fontSize - 1; // line height
+let kerning = -2; // between letters
+let easing = 0.05;
+
+let fontScaleStatic = false;
+let blackAndWhite = false;
+
+let myFont;
+let video;           
+const W = 280;
+const H = W/2
+
+function preload() {
+	myFont = loadFont('assets/font/Arial_Black.ttf');
+}
+
+function setup() {
+	createCanvas(W, H);
+	textFont(myFont);
+	textSize(fontSize);
+	textAlign(LEFT, CENTER);
+
+	video = createCapture(VIDEO);
+  	video.size(W, H);
+
+	// video = createVideo("../assets/videos/o-blur.mp4");
+	// video.size(W, H);
+	// video.volume(0);
+	// video.loop();
+}
+
+function draw() {
+	let vid = video.get();
+	// background(0, 255, 0); 
+	background(20, 20, 20);
+	// background(255);
+
+	let x = 1; // padding-left
+	let y = 3; // padding-top
+	
+	let counter = 0;
+
+  while (y < height) {
+    // translate position (display) to position (image)
+    vid.loadPixels();
+    // get current color
+    var vidX = round(map(x, 0, width, 0, vid.width));
+    var vidY = round(map(y, 0, height, 0, vid.height));
+    var c = color(vid.get(vidX, vidY));
+    var greyscale = round(red(c) * 0.222 + green(c) * 0.707 + blue(c) * 0.071);
+
+    // possible easing effect?
+    x = x + 0.05;
+    // y = y + 0.05;
+
+    push();
+    translate(x, y);
+    var fontScale;
+    // if (fontScaleStatic) {
+    //   textSize(fontScaleMax);
+    //   if (blackAndWhite) {
+    //     fill(greyscale);
+    //   } else {
+    //     fill(c);
+    //   }
+    // } else {
+		// greyscale to fontScale
+		fontScale = map(greyscale, 0, 255, fontScaleMax, fontScaleMin);
+		fontScale = max(fontScale, 1);
+		// fontScale = lerp(1, fontScale, 0.05)
+		scale(fontScale, 1);
+		// scale(lerp(1, fontScale, 0.05), 1);
+		if (blackAndWhite) {
+			fill(0);
+		}else {
+			fill(c);
+		}
+
+		// if (blackAndWhite) {
+		// 	fill(0);
+		// }else if(red(c) > 200 && green(c) > 200 && blue(c) > 200){
+		// 	noFill();
+		// }else{
+		// 	fill(0)
+		// }  
+    // }
+
+    var letter = inputText.charAt(counter);
+    text(letter, 0, 0);
+    var letterWidth = textWidth(letter) * fontScale - textWidth(letter) * fontScale * 0.08;
+    // for the next letter ... x + letter width
+    // x += letterWidth;
+    x = x + letterWidth;
+
+    pop();
+
+    
+
+    // linebreaks
+    if (x + letterWidth >= width) {
+      x = 1; // padding-left
+      y += spacing;
+      // y = y + spacing;
+    }
+
+    counter++;
+    if (counter >= inputText.length) {
+      counter = 0;
+    }
+  }
+  // noLoop();
+}
+</script>
+</body>
+</html>
